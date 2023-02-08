@@ -1,9 +1,13 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
-const typeDefinitions = /* GraphQL */ `
+const typeDefs = /* GraphQL */ `
   type Query {
     info: String!
     feed: [Link!]!
+  }
+
+  type Mutation {
+    postLink(url: String!, description: String!): Link!
   }
 
   type Link {
@@ -35,6 +39,23 @@ const resolvers = {
     // 3
     feed: () => links
   },
+  Mutation: {
+    postLink: (parent: unknown, args: { description: string; url: string }) => {
+      // 1
+      let idCount = links.length
+ 
+      // 2
+      const link: Link = {
+        id: `link-${idCount}`,
+        description: args.description,
+        url: args.url
+      }
+ 
+      links.push(link)
+ 
+      return link
+    }
+  },
   // 4
   Link: {
     id: (parent: Link) => parent.id,
@@ -44,6 +65,6 @@ const resolvers = {
 }
 
 export const schema = makeExecutableSchema({
-  typeDefs: typeDefinitions,
+  typeDefs,
   resolvers
 })
