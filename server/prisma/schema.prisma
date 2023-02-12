@@ -11,8 +11,16 @@ datasource db {
 }
 
 model Link {
-  id          Int      @id @default(autoincrement())
+ id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now())
   description String
   url         String
+  comments    Comment[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  body      String
+  link      Link?    @relation(fields: [linkId], references: [id])
+  linkId    Int?
 }
